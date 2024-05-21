@@ -9,8 +9,6 @@ public class Account implements Serializable {
     private int userPin;
     private double balance;
 
-    Account() { }
-
     Account(String userName, int userPin) {
         this.accountNumber = (int) (Math.random() * 1000000000);
         this.userName = userName;

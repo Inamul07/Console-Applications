@@ -8,7 +8,7 @@ public class Transaction extends Thread {
     private final int toAccount;
     private final double amount;
 
-    Transaction(int fromAccountNumber, int toAccountNumber, double amount, Database database) throws SQLException, ClassNotFoundException {
+    Transaction(int fromAccountNumber, int toAccountNumber, double amount, Database database) {
         this.transactionId = (int) (Math.random() * 100000);
         this.database = database;
         this.fromAccount = fromAccountNumber;
@@ -20,6 +20,11 @@ public class Transaction extends Thread {
         try {
             Account from = database.getAccount(fromAccount);
             Account to = database.getAccount(toAccount);
+
+            if(from == null || to == null) {
+                System.out.println("Transaction Failed. Account is null");
+                return;
+            }
 
             Account account1, account2;
 

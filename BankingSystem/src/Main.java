@@ -77,6 +77,10 @@ public class Main {
     private static boolean beginTransaction() {
         System.out.print("Enter Recipient Account Number: ");
         int recipientAccNum = Integer.parseInt(sc.nextLine());
+        if(recipientAccNum == currentAccount.getAccountNumber()) {
+            System.out.println("Cannot begin transaction to same account.");
+            return false;
+        }
         System.out.print("Enter Amount: ");
         int amount = Integer.parseInt(sc.nextLine());
 

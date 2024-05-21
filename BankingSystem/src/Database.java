@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Database {
-
     private final Connection connection;
+
     private final Map<Integer, Account> accountMap;
 
     private Database(String dbName) throws ClassNotFoundException, SQLException {
@@ -22,6 +22,31 @@ public class Database {
         return new Database(dbName);
     }
 
+    // ===================== SERIALIZATION & DESERIALIZATION ============================
+    private String serialize(Object object) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(object);
+
+        byte[] byteArray = outputStream.toByteArray();
+        return Base64.getEncoder().encodeToString(byteArray);
+    }
+
+    private Object deserialize(String serializedString) {
+        try {
+            byte[] byteArray = Base64.getDecoder().decode(serializedString);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+            return objectInputStream.readObject();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    // ================== SQL EXECUTION ==========================
     private void executeUpdate(String query) {
         try {
             Statement statement = connection.createStatement();
@@ -31,6 +56,7 @@ public class Database {
         }
     }
 
+    // =================== ACCOUNT OPERATIONS ======================
     public boolean createAccount(Account account) {
         try {
             String serializedAccount = serialize(account);
@@ -68,6 +94,7 @@ public class Database {
         }
     }
 
+    // =============== DATA LOAD & STORE ========================
     private void loadDataToMap() {
         try {
             Statement statement = connection.createStatement();
@@ -92,29 +119,6 @@ public class Database {
             String serializedAccount = serialize(account);
             executeUpdate("UPDATE accounts SET account = '" + serializedAccount + "' WHERE account_number = " + accountNumber + ";");
         }
-    }
-
-    private String serialize(Object object) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        objectOutputStream.writeObject(object);
-
-        byte[] byteArray = outputStream.toByteArray();
-        return Base64.getEncoder().encodeToString(byteArray);
-    }
-
-    private Object deserialize(String serializedString) {
-        try {
-            byte[] byteArray = Base64.getDecoder().decode(serializedString);
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-
-            return objectInputStream.readObject();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
     }
 
     public void closeConnection() {
