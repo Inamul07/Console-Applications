@@ -100,6 +100,8 @@ public class Main {
             authorized = loginPrompt();
         } else if (choice == 2) {
             authorized = signupPrompt();
+        } else if(choice == 3) {
+            return;
         }
 
         if (!authorized || currentAccount == null) {
@@ -109,7 +111,7 @@ public class Main {
         showOptions();
     }
 
-    private static void execteThreadExample(Database database) throws SQLException, ClassNotFoundException {
+    private static void executeThreadExample(Database database) throws SQLException, ClassNotFoundException {
 
         Transaction transactionThread2 = new Transaction(398397534, 459158514, 250, database);
         Transaction transactionThread1 = new Transaction(459158514, 398397534, 250, database);
@@ -129,13 +131,13 @@ public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         database = Database.getDB("postgres");
 
-        // executeApplication(database);
+         executeApplication(database);
 
-        // execteThreadExample(database);
+//         executeThreadExample(database);
 
-        // Account from = database.getAccount(398397534);
-        // Account to = database.getAccount(459158514);
-        // System.out.println(from + "\n" + to);
+//         Account from = database.getAccount(398397534);
+//         Account to = database.getAccount(459158514);
+//         System.out.println(from + "\n" + to);
 
         database.closeConnection();
 
