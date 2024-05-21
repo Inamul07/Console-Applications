@@ -22,6 +22,52 @@ public class Database {
         return new Database(dbName);
     }
 
+    private void executeUpdate(String query) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(query);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public boolean createAccount(Account account) {
+        try {
+            String serializedAccount = serialize(account);
+            executeUpdate("INSERT INTO accounts ( account_number, account ) VALUES ( " + account.getAccountNumber() + ", '" + serializedAccount + "' );");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        accountMap.put(account.getAccountNumber(), account);
+        return true;
+    }
+
+    public Account getAccount(int accountNumber) {
+        if(!accountMap.containsKey(accountNumber)) {
+            System.out.println("Account Not Found");
+            return null;
+        }
+        return accountMap.get(accountNumber);
+    }
+
+    public boolean updateAccount(Account account) {
+
+        if(account == null) {
+            System.out.println("Account is null");
+            return false;
+        }
+
+        accountMap.put(account.getAccountNumber(), account);
+        return true;
+    }
+
+    public void printAllAccounts() {
+        for(Account account: accountMap.values()) {
+            System.out.println(account);
+        }
+    }
+
     private void loadDataToMap() {
         try {
             Statement statement = connection.createStatement();
@@ -69,52 +115,6 @@ public class Database {
             System.out.println(e.getMessage());
         }
         return null;
-    }
-
-    private void executeUpdate(String query) {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public boolean createAccount(Account account) {
-        try {
-            String serializedAccount = serialize(account);
-            executeUpdate("INSERT INTO accounts ( account_number, account ) VALUES ( " + account.getAccountNumber() + ", '" + serializedAccount + "' );");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-        accountMap.put(account.getAccountNumber(), account);
-        return true;
-    }
-
-    public Account getAccount(int accountNumber) {
-        if(!accountMap.containsKey(accountNumber)) {
-            System.out.println("Account Not Found");
-            return null;
-        }
-        return accountMap.get(accountNumber);
-    }
-
-    public boolean updateAccount(Account account) {
-
-        if(account == null) {
-            System.out.println("Account is null");
-            return false;
-        }
-
-        accountMap.put(account.getAccountNumber(), account);
-        return true;
-    }
-
-    public void printAllAccounts() {
-        for(Account account: accountMap.values()) {
-            System.out.println(account);
-        }
     }
 
     public void closeConnection() {

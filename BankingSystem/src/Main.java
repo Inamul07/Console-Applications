@@ -114,11 +114,11 @@ public class Main {
 
     private static void executeThreadExample(Database database) throws SQLException, ClassNotFoundException {
 
+        Transaction transactionThread1 = new Transaction(459158514, 765252948, 250, database);
         Transaction transactionThread2 = new Transaction(398397534, 459158514, 250, database);
-        Transaction transactionThread1 = new Transaction(459158514, 398397534, 250, database);
 
-        transactionThread2.start();
         transactionThread1.start();
+        transactionThread2.start();
 
         try {
             transactionThread1.join();
@@ -133,8 +133,8 @@ public class Main {
         database = Database.getDB("postgres");
 
          try {
-             executeApplication(database);
-             // executeThreadExample(database);
+             // executeApplication(database);
+             executeThreadExample(database);
          } catch (Exception e) {
              System.out.println(e.getMessage());
          }
