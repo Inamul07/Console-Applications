@@ -113,6 +113,12 @@ public class Database {
         return true;
     }
 
+    public void printAllAccounts() {
+        for(Account account: accountMap.values()) {
+            System.out.println(account);
+        }
+    }
+
     public void closeConnection() {
         try {
             loadDataToDB();

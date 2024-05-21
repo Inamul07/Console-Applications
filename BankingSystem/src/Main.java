@@ -45,32 +45,34 @@ public class Main {
     }
 
     private static void showOptions() {
-        System.out.println("1. Check User Details \n2. Transaction \n3. Check Balance \n4. Deposit \n5. Withdraw");
-        int choice = Integer.parseInt(sc.nextLine());
-        if(choice == 1) {
-            System.out.println(currentAccount);
-        } else if(choice == 2) {
-            boolean success = beginTransaction();
-            if(!success) {
-                System.out.println("Transaction Failed");
-                return;
-            }
-        } else if(choice == 3) {
-            System.out.println(currentAccount.getBalance());
-        } else if(choice == 4) {
-            System.out.print("Enter Amount: ");
-            double amount = sc.nextDouble();
-            if(currentAccount.deposit(amount)) {
-                database.updateAccount(currentAccount);
-                System.out.println("Deposit Successful");
-            }
-        } else if(choice == 5) {
-            System.out.print("Enter Amount: ");
-            double amount = sc.nextDouble();
-            if(currentAccount.withdraw(amount)) {
-                database.updateAccount(currentAccount);
-                System.out.println("Withdraw Successful");
-            }
+        while(true) {
+            System.out.println("1. Check User Details \n2. Transaction \n3. Check Balance \n4. Deposit \n5. Withdraw");
+            int choice = Integer.parseInt(sc.nextLine());
+            if(choice == 1) {
+                System.out.println(currentAccount);
+            } else if(choice == 2) {
+                boolean success = beginTransaction();
+                if(!success) {
+                    System.out.println("Transaction Failed");
+                    return;
+                }
+            } else if(choice == 3) {
+                System.out.println(currentAccount.getBalance());
+            } else if(choice == 4) {
+                System.out.print("Enter Amount: ");
+                double amount = Double.parseDouble(sc.nextLine());
+                if(currentAccount.deposit(amount)) {
+                    database.updateAccount(currentAccount);
+                    System.out.println("Deposit Successful");
+                }
+            } else if(choice == 5) {
+                System.out.print("Enter Amount: ");
+                double amount = Double.parseDouble(sc.nextLine());
+                if(currentAccount.withdraw(amount)) {
+                    database.updateAccount(currentAccount);
+                    System.out.println("Withdraw Successful");
+                }
+            } else break;
         }
     }
 
@@ -83,6 +85,7 @@ public class Main {
         try {
             Transaction transactionThread = new Transaction(currentAccount.getAccountNumber(), recipientAccNum, amount, database);
             transactionThread.start();
+            transactionThread.join();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return false;
@@ -131,14 +134,14 @@ public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         database = Database.getDB("postgres");
 
-         executeApplication(database);
+         try {
+             executeApplication(database);
+             // executeThreadExample(database);
+         } catch (Exception e) {
+             System.out.println(e.getMessage());
+         }
 
-//         executeThreadExample(database);
-
-//         Account from = database.getAccount(398397534);
-//         Account to = database.getAccount(459158514);
-//         System.out.println(from + "\n" + to);
-
+        database.printAllAccounts();
         database.closeConnection();
 
     }
