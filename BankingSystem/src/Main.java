@@ -61,15 +61,13 @@ public class Main {
             } else if(choice == 4) {
                 System.out.print("Enter Amount: ");
                 double amount = Double.parseDouble(sc.nextLine());
-                if(currentAccount.deposit(amount)) {
-                    database.updateAccount(currentAccount);
+                if(currentAccount.deposit(amount) && database.updateAccount(currentAccount)) {
                     System.out.println("Deposit Successful");
                 }
             } else if(choice == 5) {
                 System.out.print("Enter Amount: ");
                 double amount = Double.parseDouble(sc.nextLine());
-                if(currentAccount.withdraw(amount)) {
-                    database.updateAccount(currentAccount);
+                if(currentAccount.withdraw(amount) && database.updateAccount(currentAccount)) {
                     System.out.println("Withdraw Successful");
                 }
             } else break;

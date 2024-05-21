@@ -71,15 +71,13 @@ public class Database {
         return null;
     }
 
-    private boolean executeUpdate(String query) {
+    private void executeUpdate(String query) {
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return false;
         }
-        return true;
     }
 
     public boolean createAccount(Account account) {
