@@ -6,7 +6,7 @@ public class Game {
     private final int releaseYear;
     private final boolean isOpenWorld;
 
-    Game(String gameName, int releaseYear, boolean isOpenWorld) {
+    public Game(String gameName, int releaseYear, boolean isOpenWorld) {
         this.gameName = gameName;
         this.releaseYear = releaseYear;
         this.isOpenWorld = isOpenWorld;
