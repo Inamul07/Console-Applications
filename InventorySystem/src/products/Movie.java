@@ -1,6 +1,8 @@
 package products;
 
-public class Movie {
+import java.io.Serializable;
+
+public class Movie implements Serializable {
     private final String movieName;
     private final String directorName;
     private final int releaseYear;

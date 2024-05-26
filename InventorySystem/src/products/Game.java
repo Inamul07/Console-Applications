@@ -1,6 +1,8 @@
 package products;
 
-public class Game {
+import java.io.Serializable;
+
+public class Game implements Serializable {
 
     private final String gameName;
     private final int releaseYear;

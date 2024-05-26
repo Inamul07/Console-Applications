@@ -1,11 +1,12 @@
 package models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Section<T> {
-    private String sectionName;
-    private List<T> products;
+public class Section<T> implements Serializable {
+    private final String sectionName;
+    private final List<T> products;
 
     public Section(String sectionName) {
         this.sectionName = sectionName;

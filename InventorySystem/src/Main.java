@@ -2,19 +2,23 @@ import database.Database;
 import models.Inventory;
 import models.Section;
 import products.Game;
+import products.Movie;
 
 class Main {
     public static void main(String[] args) {
 
-        Inventory inventory = new Inventory();
-        Section<Game> gameSection = new Section<>("My Games");
-        gameSection.addItem(new Game("GTA V", 2014, true));
-        gameSection.addItem(new Game("Efootball 2024", 2023, false));
+        Database database = Database.getInstance();
 
-        gameSection.viewItems();
-        inventory.addSection(gameSection);
+        Inventory inventory = database.getInventory(1);
+        inventory.viewListOfSections();
 
-        Section<Game> gameSection1 = (Section<Game>) inventory.getSection("My Games");₹
-        gameSection1.viewItems();
+        Section<Movie> movieSection = (Section<Movie>) inventory.getSection("My Movies");
+        movieSection.viewItems();
+
+//        Section<Movie> movieSection = new Section<>("My Movies");
+//        movieSection.addItem(new Movie("Interstellar", "Chirstopher Nolan", 2014, "Sci-Fi"));
+//        inventory.addSection(movieSection);
+
+        database.closeConnection();
     }
 }

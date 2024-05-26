@@ -1,6 +1,8 @@
 package products;
 
-public class Vehicle {
+import java.io.Serializable;
+
+public class Vehicle implements Serializable {
 
     private final String vehicleName;
     private final String manufacturer;

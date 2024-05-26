@@ -1,6 +1,8 @@
 package products;
 
-public class Book {
+import java.io.Serializable;
+
+public class Book implements Serializable {
 
     private final String bookName;
     private final String authorName;
