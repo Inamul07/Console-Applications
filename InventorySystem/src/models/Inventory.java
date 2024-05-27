@@ -5,6 +5,7 @@ import products.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -16,14 +17,16 @@ public class Inventory implements Serializable {
 
     private final int inventoryId;
     private final Map<String, Section<?>> sections;
-    private LocalDateTime lastModified;
+    private String lastModified;
+    transient private final DateTimeFormatter formatter;
 
     public Inventory() {
         sections = new HashMap<>();
         Database database = Database.getInstance();
         inventoryId = database.getNewInventoryId();
         database.addInventory(this);
-        lastModified = LocalDateTime.now();
+        formatter = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm:ss a");
+        lastModified = LocalDateTime.now().format(formatter);
     }
 
     public int getInventoryId() {
@@ -32,7 +35,7 @@ public class Inventory implements Serializable {
 
     public void addSection(Section<?> section) {
         sections.put(section.getSectionName(), section);
-        lastModified = LocalDateTime.now();
+        lastModified = LocalDateTime.now().format(formatter);
     }
 
     public Section<?> getSection(String sectionName) {
@@ -57,7 +60,7 @@ public class Inventory implements Serializable {
         }
     }
 
-    public LocalDateTime getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
