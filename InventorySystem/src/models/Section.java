@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Section<T> implements Serializable {
+
+    private static final long serialVersionUID = 2L;
+
     private final String sectionName;
     private final List<T> products;
 

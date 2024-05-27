@@ -3,6 +3,9 @@ package products;
 import java.io.Serializable;
 
 public class Movie implements Serializable {
+
+    private static final long serialVersionUID = 2L;
+
     private final String movieName;
     private final String directorName;
     private final int releaseYear;
