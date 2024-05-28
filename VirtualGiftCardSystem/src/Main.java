@@ -121,7 +121,13 @@ public class Main {
 
         Database database = Database.getInstance();
 
-         executeTaskTestCases(database);
-        // executeSampleTestCases(database);
+//         executeTaskTestCases(database);
+//         executeSampleTestCases(database);
+
+        database.viewAllCustomers();
+        database.viewAllGiftCards();
+        database.viewAllTransactions();
+
+        database.closeConnection();
     }
 }

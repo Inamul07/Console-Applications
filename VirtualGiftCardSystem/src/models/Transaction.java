@@ -2,7 +2,11 @@ package models;
 
 import database.Database;
 
-public class Transaction {
+import java.io.Serializable;
+
+public class Transaction implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final long transactionId;
     private final long cardNumber;

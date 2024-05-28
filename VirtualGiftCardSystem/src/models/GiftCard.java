@@ -2,7 +2,11 @@ package models;
 
 import database.Database;
 
-public class GiftCard {
+import java.io.Serializable;
+
+public class GiftCard implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final long cardNumber;
     private final long customerId;
