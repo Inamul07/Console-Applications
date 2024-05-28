@@ -41,7 +41,6 @@ public class Main {
         bank.viewAllAccounts();
 
         Account account = bank.getAccount(6);
-        account.deposit(100);
 
         account.viewTransactions();
 
