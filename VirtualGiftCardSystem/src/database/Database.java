@@ -36,6 +36,14 @@ public class Database {
         customerMap.put(customer.getCustomerId(), customer);
     }
 
+    public Customer getCustomer(long customerId) {
+        if(!customerMap.containsKey(customerId)) {
+            System.out.println("Customer with id: " + customerId + ", Not Found");
+            return null;
+        }
+        return customerMap.get(customerId);
+    }
+
     public void viewAllCustomers() {
         System.out.printf("%-15s %-15s%n", "Customer Id", "Balance");
         for(long customerId: customerMap.keySet()) {

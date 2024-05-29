@@ -44,14 +44,16 @@ public class GiftCard {
 
     public void setCardBalance(double cardBalance) {
         if(!isActive) {
-            throw new IllegalStateException("Gift Card is Closed");
+            System.out.println("Gift Card is Closed");
+            return;
         }
         this.cardBalance = cardBalance;
     }
 
     public void setActive(boolean active) {
         if(!isActive) {
-            throw new IllegalStateException("Gift Card is Closed");
+            System.out.println("Gift Card is Closed");
+            return;
         }
         isActive = active;
     }
@@ -94,10 +96,12 @@ public class GiftCard {
 
     public void topUp(double amount) {
         if(!isActive) {
-            throw new IllegalStateException("Gift Card is Closed");
+            System.out.println("Gift Card is Closed");
+            return;
         }
         if(isBlocked()) {
-            throw new IllegalStateException("Card is blocked");
+            System.out.println("Card is blocked");
+            return;
         }
         cardBalance += amount;
     }

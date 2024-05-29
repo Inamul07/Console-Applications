@@ -36,10 +36,12 @@ public class Customer {
 
     public long createGiftCard(int pin, double amount) {
         if(balance - amount < 0) {
-            throw new IllegalArgumentException("Balance will become negative");
+            System.out.println("Balance will become negative");
+            return 0;
         }
         if(amount < 0) {
-            throw new IllegalArgumentException("Amount cannot be Negative");
+            System.out.println("Amount cannot be Negative");
+            return 0;
         }
         GiftCard giftCard = new GiftCard(customerId, pin, amount);
         giftCards.put(giftCard.getCardNumber(), giftCard);
@@ -49,13 +51,16 @@ public class Customer {
 
     public void topUpGiftCard(long cardNumber, double amount) {
         if(!giftCards.containsKey(cardNumber)) {
-            throw new NoSuchElementException("Gift Card with id: " + cardNumber + ", Not Found");
+            System.out.println("Gift Card with id: " + cardNumber + ", Not Found");
+            return;
         }
         if(balance - amount < 0) {
-            throw new IllegalArgumentException("Balance will become negative");
+            System.out.println("Balance will become negative");
+            return;
         }
         if(amount < 0) {
-            throw new IllegalArgumentException("Amount cannot be Negative");
+            System.out.println("Amount cannot be Negative");
+            return;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
         giftCard.topUp(amount);
@@ -64,11 +69,13 @@ public class Customer {
 
     public void closeGiftCard(long cardNumber, int pin) {
         if(!giftCards.containsKey(cardNumber)) {
-            throw new NoSuchElementException("Gift Card with id: " + cardNumber + ", Not Found");
+            System.out.println("Gift Card with id: " + cardNumber + ", Not Found");
+            return;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
         if(!giftCard.checkPin(pin)) {
-            throw new IllegalArgumentException("Pin is Wrong");
+            System.out.println("Pin is Wrong");
+            return;
         }
         double cardBalance = giftCard.getCardBalance();
         giftCard.setCardBalance(0);
@@ -87,20 +94,25 @@ public class Customer {
 
     public void purchaseItem(long cardNumber, int pin, double amount) {
         if(!giftCards.containsKey(cardNumber)) {
-            throw new NoSuchElementException("Gift Card with id: " + cardNumber + ", Not Found");
+            System.out.println("Gift Card with id: " + cardNumber + ", Not Found");
+            return;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
         if(!giftCard.checkPin(pin)) {
-            throw new IllegalArgumentException("Pin is Wrong");
+            System.out.println("Pin is Wrong");
+            return;
         }
         if(giftCard.getCardBalance() - amount < 0) {
-            throw new IllegalArgumentException("Balance will become negative");
+            System.out.println("Balance will become negative");
+            return;
         }
         if(amount < 0) {
-            throw new IllegalArgumentException("Amount cannot be Negative");
+            System.out.println("Amount cannot be Negative");
+            return;
         }
         if(giftCard.isBlocked()) {
-            throw new IllegalStateException("Card is blocked");
+            System.out.println("Card is blocked");
+            return;
         }
         giftCard.setCardBalance(giftCard.getCardBalance() - amount);
         if(amount >= 500) {
@@ -124,24 +136,32 @@ public class Customer {
 
     public void blockCard(long cardNumber) {
         if(!giftCards.containsKey(cardNumber)) {
-            throw new NoSuchElementException("Gift Card with id: " + cardNumber + ", Not Found");
+            System.out.println("Gift Card with id: " + cardNumber + ", Not Found");
+            return;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
         if(giftCard.isBlocked()) {
-            throw new IllegalStateException("Card is already blocked");
+            System.out.println("Card is already blocked");
+            return;
         }
         giftCard.setBlocked(true);
     }
 
     public void unBlockCard(long cardNumber) {
         if(!giftCards.containsKey(cardNumber)) {
-            throw new NoSuchElementException("Gift Card with id: " + cardNumber + ", Not Found");
+            System.out.println("Gift Card with id: " + cardNumber + ", Not Found");
+            return;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
         if(!giftCard.isBlocked()) {
-            throw new IllegalStateException("Card is not blocked");
+            System.out.println("Card is not blocked");
+            return;
         }
         giftCard.setBlocked(false);
+    }
+
+    public void depositAmount(double amount) {
+        setBalance(getBalance() + amount);
     }
 
     @Override
