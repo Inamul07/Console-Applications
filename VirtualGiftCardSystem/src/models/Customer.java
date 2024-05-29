@@ -4,7 +4,6 @@ import database.Database;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class Customer {
 
