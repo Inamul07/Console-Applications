@@ -36,6 +36,11 @@ public class Customer {
         this.balance = balance;
     }
 
+    private void addTransaction(long cardNumber, double amount, boolean isDebit) {
+        Transaction transaction = new Transaction(cardNumber, amount, isDebit);
+        transactions.put(transaction.getTransactionId(), transaction);
+    }
+
     public long createGiftCard(int pin, double amount) {
         if(balance - amount < 0) {
             System.out.println("Balance will become negative");
@@ -49,9 +54,7 @@ public class Customer {
         giftCards.put(giftCard.getCardNumber(), giftCard);
         setBalance(balance - amount);
 
-        Transaction transaction = new Transaction(giftCard.getCardNumber(), amount, false);
-        transactions.put(transaction.getTransactionId(), transaction);
-
+        addTransaction(giftCard.getCardNumber(), amount, false);
         return giftCard.getCardNumber();
     }
 
@@ -76,9 +79,7 @@ public class Customer {
             return;
         }
         setBalance(balance - amount);
-
-        Transaction transaction = new Transaction(giftCard.getCardNumber(), amount, false);
-        transactions.put(transaction.getTransactionId(), transaction);
+        addTransaction(giftCard.getCardNumber(), amount, false);
     }
 
     public void closeGiftCard(long cardNumber, int pin) {
@@ -143,9 +144,7 @@ public class Customer {
             System.out.println(e.getMessage());
             return 0;
         }
-
-        Transaction transaction = new Transaction(cardNumber, amount, true);
-        transactions.put(transaction.getTransactionId(), transaction);
+        addTransaction(cardNumber, amount, true);
 
         Order order = new Order(customerId, cardNumber, amount);
         ordersMap.put(order.getOrderId(), order);
@@ -179,9 +178,7 @@ public class Customer {
 
         ordersMap.remove(orderId);
         Database.getInstance().removeOrder(orderId);
-
-        Transaction transaction = new Transaction(giftCard.getCardNumber(), orderAmount, false);
-        transactions.put(transaction.getTransactionId(), transaction);
+        addTransaction(giftCard.getCardNumber(), orderAmount, false);
         System.out.println("Return Successful");
 
     }

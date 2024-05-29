@@ -17,6 +17,8 @@ public class Database {
     private final Map<Long, Transaction> transactionMap;
     private final Map<Long, Order> orderMap;
 
+    private static long nextOrderId = 0;
+
     private Database() {
         customerMap = new HashMap<>();
         giftCardMap = new HashMap<>();
@@ -98,7 +100,7 @@ public class Database {
 
     // =============== ORDER METHODS ================
     public long getNextOrderId() {
-        return orderMap.size() + 1;
+        return ++nextOrderId;
     }
 
     public void addOrder(Order order) {
