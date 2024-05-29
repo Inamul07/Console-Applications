@@ -38,7 +38,19 @@ public class Main {
         System.out.print("Enter Total Amount of Items: ");
         double amount = sc.nextDouble();
 
-        customer.purchaseItem(cardId, pin, amount);
+        long transactionId = customer.purchaseItem(cardId, pin, amount);
+        if(transactionId == 0) return;
+
+        System.out.println("Purchase Successful; Order id: " + transactionId);
+    }
+
+    public static void returnItemPrompt(Customer customer) {
+        System.out.println();
+
+        System.out.print("Enter Order Id: ");
+        long orderId = sc.nextLong();
+
+        customer.returnItem(orderId);
     }
 
     public static void topUpGiftCardPrompt(Customer customer) {
@@ -111,9 +123,9 @@ public class Main {
         if(customer == null) return;
 
         while(true) {
-            System.out.print("1. Create Gift Card\n2. Purchase Item\n3. Top up Gift Card\n4. Close Gift Card\n5. Block Gift Card\n6. Unblock Gift Card\n7. View All Gift Cards\n8. View All Transactions\n9. Deposit\n10. Go Back\nEnter ur choice: ");
+            System.out.print("1. Create Gift Card\n2. Purchase Item\n3. Return Item\n4. Top up Gift Card\n5. Close Gift Card\n6. Block Gift Card\n7. Unblock Gift Card\n8. View All Gift Cards\n9. View All Transactions\n10. View All Orders\n11. Deposit\n12. Go Back\nEnter ur choice: ");
             int choice = sc.nextInt();
-            if(choice <= 0 || choice > 9) break;
+            if(choice <= 0 || choice > 11) break;
             if(choice == 1) {
                 createGiftCardPrompt(customer);
                 System.out.println();
@@ -121,21 +133,25 @@ public class Main {
                 purchaseItemPrompt(customer);
                 System.out.println();
             } else if(choice == 3) {
+                returnItemPrompt(customer);
+            } else if(choice == 4) {
                 topUpGiftCardPrompt(customer);
                 System.out.println();
-            } else if(choice == 4) {
+            } else if(choice == 5) {
                 closeGiftCardPrompt(customer);
                 System.out.println();
-            } else if(choice == 5) {
+            } else if(choice == 6) {
                 blockGiftCardPrompt(customer);
                 System.out.println();
-            } else if(choice == 6) {
+            } else if(choice == 7) {
                 unblockGiftCardPrompt(customer);
                 System.out.println();
-            } else if(choice == 7) {
-                customer.viewAllGiftCards();
             } else if(choice == 8) {
+                customer.viewAllGiftCards();
+            } else if(choice == 9) {
                 customer.viewAllTransactions();
+            } else if(choice == 10) {
+                customer.viewAllOrders();
             } else {
                 depositPrompt(customer);
                 System.out.println();
@@ -168,9 +184,6 @@ public class Main {
 
         database = Database.getInstance();
         sc = new Scanner(System.in);
-
-//         executeTaskTestCases(database);
-//         executeSampleTestCases(database);
 
         executePrompt();
 

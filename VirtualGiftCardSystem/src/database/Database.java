@@ -2,10 +2,12 @@ package database;
 
 import models.Customer;
 import models.GiftCard;
+import models.Order;
 import models.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class Database {
 
@@ -13,11 +15,13 @@ public class Database {
     private final Map<Long, Customer> customerMap;
     private final Map<Long, GiftCard> giftCardMap;
     private final Map<Long, Transaction> transactionMap;
+    private final Map<Long, Order> orderMap;
 
     private Database() {
         customerMap = new HashMap<>();
         giftCardMap = new HashMap<>();
         transactionMap = new HashMap<>();
+        orderMap = new HashMap<>();
     }
 
     public static Database getInstance() {
@@ -83,7 +87,33 @@ public class Database {
     }
 
     public void viewAllTransactions() {
-        System.out.printf("%-15s %-15s %-15s%n", "Transaction Id", "Card Id", "Amount");
+        System.out.printf("%-15s %-15s %-15s %-15s%n", "Transaction Id", "Card Id", "Amount", "Transaction Type");
+        for(long transactionId: transactionMap.keySet()) {
+            Transaction transaction = transactionMap.get(transactionId);
+            System.out.println(transaction);
+        }
+        System.out.println();
+    }
+    // ==============================================
+
+    // =============== ORDER METHODS ================
+    public long getNextOrderId() {
+        return orderMap.size() + 1;
+    }
+
+    public void addOrder(Order order) {
+        orderMap.put(order.getOrderId(), order);
+    }
+
+    public void removeOrder(long orderId) {
+        if(!orderMap.containsKey(orderId)) {
+            throw new NoSuchElementException("Order with id: " + orderId + ", Not Found");
+        }
+        orderMap.remove(orderId);
+    }
+
+    public void viewAllOrders() {
+        System.out.printf("%-15s %-15s %-15s %-15s%n", "Order Id", "Customer Id", "Card Id", "Amount");
         for(long transactionId: transactionMap.keySet()) {
             Transaction transaction = transactionMap.get(transactionId);
             System.out.println(transaction);

@@ -7,12 +7,14 @@ public class Transaction {
     private final long transactionId;
     private final long cardNumber;
     private final double amount;
+    private final boolean isDebit;
 
-    public Transaction(long customerId, double amount) {
+    public Transaction(long cardNumber, double amount, boolean isDebit) {
         Database database = Database.getInstance();
         this.transactionId = database.getNextTransactionId();
-        this.cardNumber = customerId;
+        this.cardNumber = cardNumber;
         this.amount = amount;
+        this.isDebit = isDebit;
         database.addTransaction(this);
     }
 
@@ -28,8 +30,12 @@ public class Transaction {
         return amount;
     }
 
+    public String getTransactionType() {
+        return isDebit? "DEBIT": "CREDIT";
+    }
+
     @Override
     public String toString() {
-        return String.format("%-15s %-15s %-15s", transactionId, cardNumber, amount);
+        return String.format("%-15s %-15s %-15s %-15s", transactionId, cardNumber, amount, getTransactionType());
     }
 }

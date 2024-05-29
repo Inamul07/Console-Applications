@@ -12,6 +12,7 @@ public class Customer {
     private double balance;
     private final Map<Long, GiftCard> giftCards;
     private final Map<Long, Transaction> transactions;
+    private final Map<Long, Order> ordersMap;
 
     public Customer(double balance) {
         Database database = Database.getInstance();
@@ -19,6 +20,7 @@ public class Customer {
         this.balance = balance;
         giftCards = new HashMap<>();
         transactions = new HashMap<>();
+        ordersMap = new HashMap<>();
         database.addCustomer(this);
     }
 
@@ -46,6 +48,10 @@ public class Customer {
         GiftCard giftCard = new GiftCard(customerId, pin, amount);
         giftCards.put(giftCard.getCardNumber(), giftCard);
         setBalance(balance - amount);
+
+        Transaction transaction = new Transaction(giftCard.getCardNumber(), amount, false);
+        transactions.put(transaction.getTransactionId(), transaction);
+
         return giftCard.getCardNumber();
     }
 
@@ -63,8 +69,16 @@ public class Customer {
             return;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
-        giftCard.topUp(amount);
+        try {
+            giftCard.topUp(amount);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         setBalance(balance - amount);
+
+        Transaction transaction = new Transaction(giftCard.getCardNumber(), amount, false);
+        transactions.put(transaction.getTransactionId(), transaction);
     }
 
     public void closeGiftCard(long cardNumber, int pin) {
@@ -78,8 +92,13 @@ public class Customer {
             return;
         }
         double cardBalance = giftCard.getCardBalance();
-        giftCard.setCardBalance(0);
-        giftCard.setActive(false);
+        try {
+            giftCard.setCardBalance(0);
+            giftCard.setActive(false);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         setBalance(balance + cardBalance);
     }
 
@@ -92,46 +111,97 @@ public class Customer {
         System.out.println();
     }
 
-    public void purchaseItem(long cardNumber, int pin, double amount) {
+    public long purchaseItem(long cardNumber, int pin, double amount) {
         if(!giftCards.containsKey(cardNumber)) {
             System.out.println("Gift Card with id: " + cardNumber + ", Not Found");
-            return;
+            return 0;
         }
         GiftCard giftCard = giftCards.get(cardNumber);
         if(!giftCard.checkPin(pin)) {
             System.out.println("Pin is Wrong");
-            return;
+            return 0;
         }
         if(giftCard.getCardBalance() - amount < 0) {
             System.out.println("Balance will become negative");
-            return;
+            return 0;
         }
         if(amount < 0) {
             System.out.println("Amount cannot be Negative");
-            return;
+            return 0;
         }
-        if(giftCard.isBlocked()) {
-            System.out.println("Card is blocked");
-            return;
-        }
-        giftCard.setCardBalance(giftCard.getCardBalance() - amount);
-        if(amount >= 500) {
-            giftCard.setRewardPoints(giftCard.getRewardPoints() + 50);
-            if(giftCard.getRewardPoints() == 200) {
-                giftCard.updateCardType();
-                giftCard.setRewardPoints(0);
+
+        try {
+            giftCard.setCardBalance(giftCard.getCardBalance() - amount);
+            if(amount >= 500) {
+                giftCard.setRewardPoints(giftCard.getRewardPoints() + 50);
+                if(giftCard.getRewardPoints() == 200) {
+                    giftCard.updateCardType();
+                    giftCard.setRewardPoints(0);
+                }
             }
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            return 0;
         }
-        Transaction transaction = new Transaction(cardNumber, amount);
+
+        Transaction transaction = new Transaction(cardNumber, amount, true);
         transactions.put(transaction.getTransactionId(), transaction);
+
+        Order order = new Order(customerId, cardNumber, amount);
+        ordersMap.put(order.getOrderId(), order);
+        return order.getOrderId();
+    }
+
+    public void returnItem(long orderId) {
+        if(!ordersMap.containsKey(orderId)) {
+            System.out.println("Order with id: " + orderId + ", Not Found");
+            return;
+        }
+        Order prevOrder = ordersMap.get(orderId);
+        double orderAmount = prevOrder.getAmount();
+
+        GiftCard giftCard = giftCards.get(prevOrder.getCardNumber());
+
+        try {
+            giftCard.topUp(orderAmount);
+        } catch (IllegalStateException e ) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        if(orderAmount >= 500) {
+            if(giftCard.getRewardPoints() == 0) {
+                giftCard.setRewardPoints(200);
+                giftCard.rollBackCardType();
+            }
+            giftCard.setRewardPoints(giftCard.getRewardPoints() - 50);
+        }
+
+        ordersMap.remove(orderId);
+        Database.getInstance().removeOrder(orderId);
+
+        Transaction transaction = new Transaction(giftCard.getCardNumber(), orderAmount, false);
+        transactions.put(transaction.getTransactionId(), transaction);
+        System.out.println("Return Successful");
+
     }
 
     public void viewAllTransactions() {
-        System.out.printf("%-15s %-15s %-15s%n", "Transaction Id", "Card Number", "Amount");
+        System.out.printf("%-15s %-15s %-15s %-15s%n", "Transaction Id", "Card Number", "Amount", "Transaction Type");
         for(long transactionId: transactions.keySet()) {
             Transaction transaction = transactions.get(transactionId);
             System.out.println(transaction);
         }
+        System.out.println();
+    }
+
+    public void viewAllOrders() {
+        System.out.printf("%-15s %-15s %-15s %-15s%n", "Order Id", "Customer Id", "Card Id", "Amount");
+        for(long orderId: ordersMap.keySet()) {
+            Order order = ordersMap.get(orderId);
+            System.out.println(order);
+        }
+        System.out.println();
     }
 
     public void blockCard(long cardNumber) {
