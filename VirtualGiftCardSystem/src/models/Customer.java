@@ -1,16 +1,12 @@
 package models;
 
 import database.Database;
-import utils.Serialization;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class Customer implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Customer {
 
     private final long customerId;
     private double balance;
