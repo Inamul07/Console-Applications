@@ -43,15 +43,15 @@ public class GiftCard {
     }
 
     public void setCardBalance(double cardBalance) {
-        if(!isActive) {
-            throw new IllegalStateException("Gift Card is Closed");
+        if(!isActive || isBlocked) {
+            throw new IllegalStateException("Gift Card is " + (isBlocked? "Blocked": "Closed"));
         }
         this.cardBalance = cardBalance;
     }
 
     public void setActive(boolean active) {
-        if(!isActive) {
-            throw new IllegalStateException("Gift Card is Closed");
+        if(!isActive || isBlocked) {
+            throw new IllegalStateException("Gift Card is " + (isBlocked? "Blocked": "Closed"));
         }
         isActive = active;
     }
@@ -85,19 +85,20 @@ public class GiftCard {
     }
 
     public void updateCardType() {
-        if(cardType == GiftCardType.SILVER) {
-            setCardType(GiftCardType.GOLD);
-        } else if (cardType == GiftCardType.GOLD) {
-            setCardType(GiftCardType.PLATINUM);
-        }
+        int currentCardType = cardType.ordinal();
+        if(cardType == GiftCardType.PLATINUM) return;
+        setCardType(GiftCardType.values()[currentCardType + 1]);
+    }
+
+    public void rollBackCardType() {
+        int currentCardType = cardType.ordinal();
+        if(cardType == GiftCardType.SILVER) return;
+        setCardType(GiftCardType.values()[currentCardType - 1]);
     }
 
     public void topUp(double amount) {
-        if(!isActive) {
-            throw new IllegalStateException("Gift Card is Closed");
-        }
-        if(isBlocked()) {
-            throw new IllegalStateException("Card is blocked");
+        if(!isActive || isBlocked) {
+            throw new IllegalStateException("Gift Card is " + (isBlocked? "Blocked": "Closed"));
         }
         cardBalance += amount;
     }

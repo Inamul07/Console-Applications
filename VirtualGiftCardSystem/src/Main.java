@@ -1,127 +1,191 @@
 import database.Database;
 import models.Customer;
 
+import java.util.Scanner;
+
 public class Main {
 
-    private static void executeTaskTestCases(Database database) {
-        // Task 1
-        Customer customer1 = new Customer(10000);
-        Customer customer2 = new Customer(20000);
-        Customer customer3 = new Customer(30000);
+    static Scanner sc;
+    static Database database;
 
-        database.viewAllCustomers();
+    public static void createGiftCardPrompt(Customer customer) {
+        System.out.println();
 
-        // Task 2
-        long cardNum1 = customer1.createGiftCard(1111, 2500);
-        long cardNum2 = customer1.createGiftCard(2222, 2500);
-        long cardNum3 = customer2.createGiftCard(3333, 5000);
-        long cardNum4 = customer2.createGiftCard(1234, 0);
+        System.out.print("Create a 4 digit pin: ");
+        int pin = sc.nextInt();
+        if(pin < 1000 || pin > 9999) {
+            System.out.println("PIN should only have 4 digits");
+        }
 
-        database.viewAllGiftCards();
-        database.viewAllCustomers();
+        System.out.print("Enter Amount to transfer into card: ");
+        double amount = sc.nextDouble();
 
-        // Task 3
-        customer1.topUpGiftCard(cardNum1, 1000);
-        customer2.topUpGiftCard(cardNum4, 5000);
-
-        database.viewAllGiftCards();
-        database.viewAllCustomers();
-
-        // Task 4
-        customer2.closeGiftCard(cardNum4, 1234);
-
-        database.viewAllGiftCards();
-        database.viewAllCustomers();
-
-        // Task 5
-        customer1.purchaseItem(cardNum2, 2222, 1000);
-        customer1.purchaseItem(cardNum2, 2222, 1000);
-        customer2.purchaseItem(cardNum3, 3333, 2000);
-
-        database.viewAllGiftCards();
-        database.viewAllCustomers();
-        database.viewAllTransactions();
-
-        // Task 6
-        customer2.blockCard(cardNum4);
-
-        customer2.purchaseItem(cardNum3, 3333, 500);
-        customer2.purchaseItem(cardNum3, 3333, 500);
-        customer2.purchaseItem(cardNum3, 3333, 500);
-
-        database.viewAllGiftCards();
-        database.viewAllCustomers();
+        long cardNumber = customer.createGiftCard(pin, amount);
+        if(cardNumber == 0) return;
+        System.out.println("Card Created.");
+        System.out.println("Your Card Number is " + cardNumber);
     }
 
-    private static void executeSampleTestCases(Database database) {
-        // TestCase
-        Customer customer1 = new Customer(7000);
-        Customer customer2 = new Customer(8000);
-        Customer customer3 = new Customer(9000);
+    public static void purchaseItemPrompt(Customer customer) {
+        System.out.println();
 
-        long cardNum1 = customer1.createGiftCard(1111, 6000);
+        System.out.print("Enter Gift Card Number: ");
+        long cardId = sc.nextLong();
 
-        long cardNum2 = customer2.createGiftCard(2222, 3000);
-        long cardNum3 = customer2.createGiftCard(2222, 3000);
+        System.out.print("Enter pin: ");
+        int pin = sc.nextInt();
 
-        long cardNum4 = customer3.createGiftCard(3333, 2000);
-        long cardNum5 = customer3.createGiftCard(3333, 2000);
-        long cardNum6 = customer3.createGiftCard(3333, 2000);
+        System.out.print("Enter Total Amount of Items: ");
+        double amount = sc.nextDouble();
 
-        customer1.purchaseItem(cardNum1, 1111, 1000);
-        customer2.purchaseItem(cardNum2, 2222, 1000);
-        customer2.purchaseItem(cardNum3, 2222, 1000);
-        customer3.purchaseItem(cardNum4, 3333, 1000);
-        customer3.purchaseItem(cardNum5, 3333, 1000);
-        customer3.purchaseItem(cardNum6, 3333, 1000);
+        long transactionId = customer.purchaseItem(cardId, pin, amount);
+        if(transactionId == 0) return;
 
-        customer1.blockCard(cardNum1);
-        customer2.blockCard(cardNum2);
-        customer2.blockCard(cardNum3);
-        customer3.blockCard(cardNum4);
-        customer3.blockCard(cardNum5);
-        customer3.blockCard(cardNum6);
+        System.out.println("Purchase Successful; Order id: " + transactionId);
+    }
 
-        customer1.unBlockCard(cardNum1);
-        customer2.unBlockCard(cardNum2);
-        customer2.unBlockCard(cardNum3);
-        customer3.unBlockCard(cardNum4);
-        customer3.unBlockCard(cardNum5);
-        customer3.unBlockCard(cardNum6);
+    public static void returnItemPrompt(Customer customer) {
+        System.out.println();
 
-        customer1.purchaseItem(cardNum1, 1111, 1000);
-        customer2.purchaseItem(cardNum2, 2222, 1000);
-        customer2.purchaseItem(cardNum3, 2222, 1000);
-        customer3.purchaseItem(cardNum4, 3333, 1000);
-        customer3.purchaseItem(cardNum5, 3333, 1000);
-        customer3.purchaseItem(cardNum6, 3333, 1000);
+        System.out.print("Enter Order Id: ");
+        long orderId = sc.nextLong();
 
-        customer1.topUpGiftCard(cardNum1, 1000);
-        customer2.topUpGiftCard(cardNum2, 1000);
-        customer2.topUpGiftCard(cardNum3, 1000);
-        customer3.topUpGiftCard(cardNum4, 1000);
-        customer3.topUpGiftCard(cardNum5, 1000);
-        customer3.topUpGiftCard(cardNum6, 1000);
+        customer.returnItem(orderId);
+    }
 
-        customer1.closeGiftCard(cardNum1, 1111);
-        customer2.closeGiftCard(cardNum2, 2222);
-        customer2.closeGiftCard(cardNum3, 2222);
-        customer3.closeGiftCard(cardNum4, 3333);
-        customer3.closeGiftCard(cardNum5, 3333);
-        customer3.closeGiftCard(cardNum6, 3333);
+    public static void topUpGiftCardPrompt(Customer customer) {
+        System.out.println();
 
-        long cardNum7 = customer1.createGiftCard(1111, 5000);
+        System.out.print("Enter Gift Card Number: ");
+        long cardId = sc.nextLong();
 
-        database.viewAllCustomers();
-        database.viewAllGiftCards();
-        database.viewAllTransactions();
+        System.out.print("Enter Amount to Top Up: ");
+        double amount = sc.nextDouble();
+
+        customer.topUpGiftCard(cardId, amount);
+    }
+
+    public static void closeGiftCardPrompt(Customer customer) {
+        System.out.println();
+
+        System.out.print("Enter Gift Card Number: ");
+        long cardId = sc.nextLong();
+
+        System.out.print("Enter pin: ");
+        int pin = sc.nextInt();
+
+        customer.closeGiftCard(cardId, pin);
+    }
+
+    public static void blockGiftCardPrompt(Customer customer) {
+        System.out.println();
+
+        System.out.print("Enter Gift Card Number: ");
+        long cardId = sc.nextLong();
+
+        customer.blockCard(cardId);
+    }
+
+    public static void unblockGiftCardPrompt(Customer customer) {
+        System.out.println();
+
+        System.out.print("Enter Gift Card Number: ");
+        long cardId = sc.nextLong();
+
+        customer.unBlockCard(cardId);
+    }
+
+    public static void depositPrompt(Customer customer) {
+        System.out.println();
+
+        System.out.print("Enter Amount to Deposit: ");
+        double amount = sc.nextDouble();
+
+        customer.depositAmount(amount);
+        System.out.println("Deposit Successful");
+    }
+
+    public static void createAccountPrompt() {
+        System.out.println();
+        System.out.print("Enter Amount to Deposit: ");
+        double amount = sc.nextDouble();
+        Customer customer = new Customer(amount);
+
+        System.out.println("Account created.");
+        System.out.println("Your Id is " + customer.getCustomerId());
+    }
+
+    public static void loginPrompt() {
+        System.out.print("Enter customer id: ");
+        long customerId = sc.nextLong();
+
+        Customer customer = database.getCustomer(customerId);
+        if(customer == null) return;
+
+        while(true) {
+            System.out.print("1. Create Gift Card\n2. Purchase Item\n3. Return Item\n4. Top up Gift Card\n5. Close Gift Card\n6. Block Gift Card\n7. Unblock Gift Card\n8. View All Gift Cards\n9. View All Transactions\n10. View All Orders\n11. Deposit\n12. Go Back\nEnter ur choice: ");
+            int choice = sc.nextInt();
+            if(choice <= 0 || choice > 11) break;
+            if(choice == 1) {
+                createGiftCardPrompt(customer);
+                System.out.println();
+            } else if(choice == 2) {
+                purchaseItemPrompt(customer);
+                System.out.println();
+            } else if(choice == 3) {
+                returnItemPrompt(customer);
+            } else if(choice == 4) {
+                topUpGiftCardPrompt(customer);
+                System.out.println();
+            } else if(choice == 5) {
+                closeGiftCardPrompt(customer);
+                System.out.println();
+            } else if(choice == 6) {
+                blockGiftCardPrompt(customer);
+                System.out.println();
+            } else if(choice == 7) {
+                unblockGiftCardPrompt(customer);
+                System.out.println();
+            } else if(choice == 8) {
+                customer.viewAllGiftCards();
+            } else if(choice == 9) {
+                customer.viewAllTransactions();
+            } else if(choice == 10) {
+                customer.viewAllOrders();
+            } else {
+                depositPrompt(customer);
+                System.out.println();
+            }
+        }
+    }
+
+    private static void executePrompt() {
+        while(true) {
+            System.out.print("1. Create Account\n2. Log in\n3. View Account Summary\n4. View Gift card Summary\n5. View Transaction History\n6. Exit\nEnter ur choice: ");
+            int choice = sc.nextInt();
+            if(choice <= 0 || choice > 5) break;
+            if(choice == 1) {
+                createAccountPrompt();
+                System.out.println();
+            } else if(choice == 2) {
+                loginPrompt();
+                System.out.println();
+            } else if(choice == 3) {
+                database.viewAllCustomers();
+            } else if(choice == 4) {
+                database.viewAllGiftCards();
+            } else {
+                database.viewAllTransactions();
+            }
+        }
     }
 
     public static void main(String[] args) {
 
-        Database database = Database.getInstance();
+        database = Database.getInstance();
+        sc = new Scanner(System.in);
 
-         executeTaskTestCases(database);
-        // executeSampleTestCases(database);
+        executePrompt();
+
     }
 }
